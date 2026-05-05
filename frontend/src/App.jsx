@@ -69,7 +69,7 @@ const pageDetails = {
     title: 'Users',
     eyebrow: 'Access Control',
     value: '16',
-    detail: 'User internal dengan akses ke dashboard legal.',
+    detail: 'User internal yang memiliki akses ke aplikasi legal dengan berbagai peran dan status.',
   },
   '/settings': {
     title: 'Settings',
