@@ -22,15 +22,15 @@ import { Edit03, Trash03, Users01 } from './components/template/TemplateIcons.js
 
 function getCurrentPath() {
   if (typeof window === 'undefined') {
-    return '/dashboard'
+    return '/MyTickets'
   }
 
-  return window.location.pathname === '/' ? '/dashboard' : window.location.pathname
+  return window.location.pathname === '/' ? '/MyTickets' : window.location.pathname
 }
 
 const pageDetails = {
-  '/dashboard': {
-    title: 'Dashboard',
+  '/MyTickets': {
+    title: 'MyTickets',
     eyebrow: 'Legal Operations',
     value: '24',
     detail: 'Tiket aktif yang sedang diproses oleh tim legal.',
@@ -103,7 +103,7 @@ const userRows = [
     jobLevel: 'Staff',
     status: 'Active',
     statusKey: 'active',
-    apps: ['Dashboard', 'Legal Docs', 'Tickets'],
+    apps: ['MyTickets', 'Legal Docs', 'Tickets'],
     createdAt: '2026-01-10',
     updatedAt: '2026-04-29',
     lastActive: '2026-04-30 09:10',
@@ -366,6 +366,23 @@ function userMatchesSearch(user, searchQuery) {
   ].some((value) => String(value).toLowerCase().includes(query))
 }
 
+function getColorForStatus(status) {
+  switch (status) {
+    case 'Waiting':
+      return '#ffa500' // orange
+    case 'In Progress':
+      return '#007bff' // blue
+    case 'Resolved':
+      return '#28a745' // green
+    case 'Feedback':
+      return '#ffc107' // yellow
+    case 'Void':
+      return '#dc3545' // red
+    default:
+      return '#6c757d'
+  }
+}
+
 function App() {
   const [activePath, setActivePath] = useState(getCurrentPath)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -377,6 +394,7 @@ function App() {
   const [usersPageSize, setUsersPageSize] = useState(DEFAULT_USERS_PAGE_SIZE)
   const [activeActionDialog, setActiveActionDialog] = useState(null)
   const [selectedUser, setSelectedUser] = useState(null)
+  const [activeCard, setActiveCard] = useState('Waiting')
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -511,10 +529,50 @@ function App() {
         ]
       }
 
+      if (activePath === '/MyTickets') {
+        return [
+          {
+            title: 'Waiting',
+            eyebrow: 'Status',
+            value: '5',
+            detail: 'Tiket menunggu review awal.',
+            state: 'Pending',
+          },
+          {
+            title: 'In Progress',
+            eyebrow: 'Status',
+            value: '12',
+            detail: 'Tiket sedang diproses oleh tim legal.',
+            state: 'Active',
+          },
+          {
+            title: 'Resolved',
+            eyebrow: 'Status',
+            value: '8',
+            detail: 'Tiket yang telah diselesaikan.',
+            state: 'Stable',
+          },
+          {
+            title: 'Feedback',
+            eyebrow: 'Status',
+            value: '3',
+            detail: 'Tiket menunggu feedback dari pemohon.',
+            state: 'Focus',
+          },
+          {
+            title: 'Void',
+            eyebrow: 'Status',
+            value: '1',
+            detail: 'Tiket yang dibatalkan atau tidak valid.',
+            state: 'Inactive',
+          },
+        ]
+      }
+
       return [
         activePage,
         {
-          title: 'SLA Review',
+          title: 'MyTickets',
           eyebrow: 'Performance',
           value: '92%',
           detail: 'Permintaan yang selesai sebelum batas SLA.',
@@ -527,7 +585,7 @@ function App() {
         },
       ]
     },
-    [activePage, activeUsersCount, isTablePage, tableUsers.length, uniqueAppsCount],
+    [activePage, activeUsersCount, isTablePage, tableUsers.length, uniqueAppsCount, activePath],
   )
 
   const shellClassName = [
@@ -560,11 +618,11 @@ function App() {
 
       <div className="dashboard-stage">
         <Header
-          title="Nama Project"
+          title="Ticketing Legal"
           showMenuButton
           onMenuToggle={() => setMobileSidebarOpen(true)}
           breadcrumb={[
-            { label: 'Nama Project', href: '#' },
+            { label: 'Ticketing Legal', href: '#' },
             { label: activePage.title, href: '#', active: true },
           ]}
           searchProps={{
@@ -586,16 +644,41 @@ function App() {
         <main className="dashboard-main">
           <div className="dashboard-content">
             <section className="dashboard-overview" aria-label="Ringkasan dashboard">
-              {overviewCards.map((card) => (
-                <article className="dashboard-card" key={card.title}>
-                  <div className="dashboard-card__meta">
-                    <p className="dashboard-card__label">{card.eyebrow}</p>
-                    <span className="dashboard-card__state">Active</span>
-                  </div>
-                  <strong className="dashboard-card__value">{card.value}</strong>
-                  <p className="dashboard-card__detail">{card.detail}</p>
-                </article>
-              ))}
+              {overviewCards.map((card) => {
+                const isMyTickets = activePath === '/MyTickets'
+                const isActive = isMyTickets && activeCard === card.title
+                return (
+                  <article
+                    className={`dashboard-card ${isActive ? 'active' : ''} ${isMyTickets ? 'clickable' : ''}`}
+                    key={card.title}
+                    style={isMyTickets && isActive ? { borderColor: getColorForStatus(card.title) } : undefined}
+                    onClick={isMyTickets ? () => setActiveCard(card.title) : undefined}
+                  >
+                    {isMyTickets && (
+                      <div
+                        className="card-accent-bar"
+                        style={{ backgroundColor: getColorForStatus(card.title) }}
+                      />
+                    )}
+                    <div className="dashboard-card__badge-row">
+                      <div className="status-badge">
+                        <span
+                          className="status-indicator"
+                          style={{ backgroundColor: getColorForStatus(card.title) }}
+                        />
+                        <span className="dashboard-card__label">{card.title}</span>
+                      </div>
+                    </div>
+                    <strong className="dashboard-card__value">{card.value}</strong>
+                    {isMyTickets && (
+                      <div className="dashboard-card__footer-text">
+                        {isActive ? 'Active filter' : 'Click to filter'}
+                      </div>
+                    )}
+                    {!isMyTickets && <p className="dashboard-card__detail">{card.detail}</p>}
+                  </article>
+                )
+              })}
             </section>
 
             {isTablePage ? (

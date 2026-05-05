@@ -10,7 +10,7 @@ import {
 export const defaultNavigationPath = '/dashboard'
 
 export const implementedNavigationPaths = [
-  '/dashboard',
+  '/MyTickets',
   '/tickets',
   '/documents',
   '/Table',
@@ -21,9 +21,9 @@ export const implementedNavigationPaths = [
 
 export const primaryNavigationItems = [
   {
-    id: 'dashboard',
-    label: 'Dashboard',
-    href: '/dashboard',
+    id: 'my-tickets',
+    label: 'My Tickets',
+    href: '/MyTickets',
     icon: LayoutDashboard,
   },
   {
