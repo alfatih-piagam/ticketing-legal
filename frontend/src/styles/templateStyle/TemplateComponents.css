@@ -104,6 +104,10 @@ select {
   overscroll-behavior: contain;
 }
 
+.dashboard-main--mytickets {
+  overflow: hidden;
+}
+
 .sidebar {
   background: linear-gradient(180deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
   width: var(--sidebar-current-width);
@@ -1161,6 +1165,12 @@ select {
   gap: 24px;
 }
 
+.dashboard-content--mytickets {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
 .dashboard-overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -1213,7 +1223,7 @@ select {
   gap: 8px;
 }
 
-..dashboard-card__label {
+.dashboard-card__label {
   margin: 0;
   font-size: 0.78rem;
   font-weight: 700;
@@ -1575,6 +1585,83 @@ select {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.9fr);
   gap: 24px;
+}
+
+.mtickets-table .users-table {
+  min-width: 1280px;
+}
+
+.mytickets-table-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mtickets-table-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.mtickets-table {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mtickets-table::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.mtickets-table .users-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f4f7fb;
+}
+
+.mtickets-table-shell .users-table-pagination {
+  flex-shrink: 0;
+}
+
+.mtickets-table__detail-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.mtickets-table__detail-item {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(26, 42, 87, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.mtickets-table__detail-label {
+  margin: 0;
+  color: var(--accent-teal-dark);
+  font-size: 0.7rem;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.mtickets-table__detail-value {
+  margin: 0;
+  color: var(--primary-blue);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+  word-break: break-word;
 }
 
 .dashboard-panel {
@@ -3179,6 +3266,10 @@ select {
   width: min(100%, 560px);
 }
 
+.mtickets-create-popup {
+  width: min(100%, 860px);
+}
+
 .register-user-popup--users {
   width: min(100%, 980px);
 }
@@ -3279,6 +3370,75 @@ select {
 .register-user-popup__dropdown-button:hover {
   border-color: rgba(42, 157, 143, 0.4);
   background: #ffffff;
+}
+
+.register-user-popup__upload {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  padding: 1.35rem 1.1rem;
+  border: 1.5px dashed rgba(42, 157, 143, 0.38);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(238, 252, 249, 0.9) 0%, #ffffff 100%);
+  color: var(--primary-blue);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.register-user-popup__upload:hover,
+.register-user-popup__upload.is-drag-active {
+  border-color: rgba(42, 157, 143, 0.72);
+  background: linear-gradient(180deg, rgba(229, 250, 245, 0.95) 0%, #ffffff 100%);
+  box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.1);
+  transform: translateY(-1px);
+}
+
+.register-user-popup__upload-input {
+  display: none;
+}
+
+.register-user-popup__upload-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(42, 157, 143, 0.12);
+  color: var(--accent-teal-dark);
+}
+
+.register-user-popup__upload-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.register-user-popup__upload-meta {
+  color: #5a6b88;
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.register-user-popup__upload-file {
+  min-height: 1.25rem;
+  color: var(--accent-teal-dark);
+  font-size: 0.85rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.mtickets-create-popup__upload-panel {
+  align-content: start;
+}
+
+.mtickets-create-popup__upload {
+  min-height: 100%;
+  align-content: center;
 }
 
 .register-user-popup__dropdown-button:focus {

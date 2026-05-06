@@ -19,6 +19,7 @@ import HorizontalBarChartPreview from './components/chart/HorizontalBarChart.jsx
 import LineChartPreview from './components/chart/LineChart.jsx'
 import PieChartPreview from './components/chart/PieChart.jsx'
 import { Edit03, Trash03, Users01 } from './components/template/TemplateIcons.jsx'
+import MyTickets from './pages/MTickets/MyTickets.jsx'
 
 function getCurrentPath() {
   if (typeof window === 'undefined') {
@@ -641,8 +642,12 @@ function App() {
           onRefresh={() => setLastUpdated(new Date())}
         />
 
-        <main className="dashboard-main">
-          <div className="dashboard-content">
+        <main
+          className={`dashboard-main${activePath === '/MyTickets' ? ' dashboard-main--mytickets' : ''}`}
+        >
+          <div
+            className={`dashboard-content${activePath === '/MyTickets' ? ' dashboard-content--mytickets' : ''}`}
+          >
             <section className="dashboard-overview" aria-label="Ringkasan dashboard">
               {overviewCards.map((card) => {
                 const isMyTickets = activePath === '/MyTickets'
@@ -681,7 +686,9 @@ function App() {
               })}
             </section>
 
-            {isTablePage ? (
+            {activePath === '/MyTickets' ? (
+              <MyTickets activePage={activePage} searchQuery={searchQuery} />
+            ) : isTablePage ? (
               <section className="dashboard-panel users-table-card" aria-label={activePage.title}>
                 <div className="users-table-card__header">
                   <div>
