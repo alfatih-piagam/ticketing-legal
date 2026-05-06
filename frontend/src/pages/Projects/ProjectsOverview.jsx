@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react'
 
 import ButtonRangeDate from '../../components/button/ButtonRangeDate.jsx'
 import { Ticket01 } from '../../components/template/TemplateIcons.jsx'
-import CardStatusMT from './CardStatusMT.jsx'
-import DataTableMT, { INITIAL_TICKET_ROWS } from './DataTableMT.jsx'
-import DialogCreateTicket from '../../components/Dialog/DialogCreateMT.jsx'
+import CardStatusProjects from './CardStatusProjects.jsx'
+import DataTableTickets, { INITIAL_TICKET_ROWS } from './DataTableProjects.jsx'
+import DialogCreateProjects from '../../components/Dialog/DialogCreateProjects.jsx'
 
 function MyTickets({ activePage, searchQuery }) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)

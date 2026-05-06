@@ -25,3 +25,4 @@ function ButtonMain({ label = 'Tombol' }) {
 }
 
 export default ButtonMain
+  

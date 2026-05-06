@@ -1588,7 +1588,7 @@ select {
 }
 
 .mtickets-table .users-table {
-  min-width: 1280px;
+  min-width: 1140px;
 }
 
 .mytickets-table-card {
@@ -1597,6 +1597,26 @@ select {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+}
+
+.mytickets-table-card__header {
+  align-items: center;
+}
+
+.mytickets-table-card__title-group {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.mytickets-table-card__title {
+  line-height: 1.15;
+}
+
+.mtickets-status-card__value {
+  color: #4b5563;
+  font-weight: 700;
 }
 
 .mtickets-table-shell {
@@ -1625,6 +1645,44 @@ select {
   top: 0;
   z-index: 1;
   background: #f4f7fb;
+  padding: 0.82rem 0.88rem;
+  font-size: 0.72rem;
+}
+
+.mtickets-table .users-table td {
+  padding: 0.78rem 0.88rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.mtickets-table .users-table__identity {
+  gap: 0.7rem;
+  min-width: 190px;
+}
+
+.mtickets-table .users-table__avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 0.76rem;
+}
+
+.mtickets-table .users-table__name {
+  font-size: 0.92rem;
+}
+
+.mtickets-table .users-table__meta {
+  font-size: 0.68rem;
+}
+
+.mtickets-table .users-table__status--inline {
+  padding: 0.16rem 0.5rem;
+  font-size: 0.64rem;
+}
+
+.mtickets-table .users-table__detail-button {
+  min-height: 32px;
+  padding: 0.45rem 0.78rem;
+  font-size: 0.8rem;
 }
 
 .mtickets-table-shell .users-table-pagination {
@@ -3882,6 +3940,10 @@ select {
   .master-project-panel__header,
   .master-project-detail__hero {
     flex-direction: column;
+  }
+
+  .mytickets-table-card__header {
+    align-items: stretch;
   }
 
   .users-table-card__action {

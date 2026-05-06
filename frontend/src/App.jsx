@@ -60,6 +60,18 @@ const pageDetails = {
     value: '8',
     detail: 'Contoh komponen table dengan kolom action inline untuk edit dan delete.',
   },
+  '/TicketsOverview': {
+    title: 'Tickets Overview',
+    eyebrow: 'Ticket Analytics',
+    value: '24',
+    detail: 'Ringkasan status dan performa tiket legal.',
+  },
+  '/ProjectsOverview': {
+    title: 'Projects Overview',
+    eyebrow: 'Project Summary',
+    value: '7',
+    detail: 'Ringkasan proyek dan aktivitas terkait.',
+  },
   '/Chart': {
     title: 'Chart',
     eyebrow: 'Visual Analytics',
@@ -367,23 +379,6 @@ function userMatchesSearch(user, searchQuery) {
   ].some((value) => String(value).toLowerCase().includes(query))
 }
 
-function getColorForStatus(status) {
-  switch (status) {
-    case 'Waiting':
-      return '#ffa500' // orange
-    case 'In Progress':
-      return '#007bff' // blue
-    case 'Resolved':
-      return '#28a745' // green
-    case 'Feedback':
-      return '#ffc107' // yellow
-    case 'Void':
-      return '#dc3545' // red
-    default:
-      return '#6c757d'
-  }
-}
-
 function App() {
   const [activePath, setActivePath] = useState(getCurrentPath)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -395,8 +390,6 @@ function App() {
   const [usersPageSize, setUsersPageSize] = useState(DEFAULT_USERS_PAGE_SIZE)
   const [activeActionDialog, setActiveActionDialog] = useState(null)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [activeCard, setActiveCard] = useState('Waiting')
-
   useEffect(() => {
     const handleRouteChange = () => {
       setActivePath(getCurrentPath())
@@ -509,6 +502,10 @@ function App() {
 
   const overviewCards = useMemo(
     () => {
+      if (activePath === '/MyTickets') {
+        return []
+      }
+
       if (isTablePage) {
         return [
           {
@@ -526,46 +523,6 @@ function App() {
             eyebrow: 'Access',
             value: String(uniqueAppsCount),
             detail: 'Aplikasi yang sudah dipetakan pada user internal.',
-          },
-        ]
-      }
-
-      if (activePath === '/MyTickets') {
-        return [
-          {
-            title: 'Waiting',
-            eyebrow: 'Status',
-            value: '5',
-            detail: 'Tiket menunggu review awal.',
-            state: 'Pending',
-          },
-          {
-            title: 'In Progress',
-            eyebrow: 'Status',
-            value: '12',
-            detail: 'Tiket sedang diproses oleh tim legal.',
-            state: 'Active',
-          },
-          {
-            title: 'Resolved',
-            eyebrow: 'Status',
-            value: '8',
-            detail: 'Tiket yang telah diselesaikan.',
-            state: 'Stable',
-          },
-          {
-            title: 'Feedback',
-            eyebrow: 'Status',
-            value: '3',
-            detail: 'Tiket menunggu feedback dari pemohon.',
-            state: 'Focus',
-          },
-          {
-            title: 'Void',
-            eyebrow: 'Status',
-            value: '1',
-            detail: 'Tiket yang dibatalkan atau tidak valid.',
-            state: 'Inactive',
           },
         ]
       }
@@ -648,43 +605,21 @@ function App() {
           <div
             className={`dashboard-content${activePath === '/MyTickets' ? ' dashboard-content--mytickets' : ''}`}
           >
-            <section className="dashboard-overview" aria-label="Ringkasan dashboard">
-              {overviewCards.map((card) => {
-                const isMyTickets = activePath === '/MyTickets'
-                const isActive = isMyTickets && activeCard === card.title
-                return (
-                  <article
-                    className={`dashboard-card ${isActive ? 'active' : ''} ${isMyTickets ? 'clickable' : ''}`}
-                    key={card.title}
-                    style={isMyTickets && isActive ? { borderColor: getColorForStatus(card.title) } : undefined}
-                    onClick={isMyTickets ? () => setActiveCard(card.title) : undefined}
-                  >
-                    {isMyTickets && (
-                      <div
-                        className="card-accent-bar"
-                        style={{ backgroundColor: getColorForStatus(card.title) }}
-                      />
-                    )}
+            {activePath !== '/MyTickets' && (
+              <section className="dashboard-overview" aria-label="Ringkasan dashboard">
+                {overviewCards.map((card) => (
+                  <article className="dashboard-card" key={card.title}>
                     <div className="dashboard-card__badge-row">
                       <div className="status-badge">
-                        <span
-                          className="status-indicator"
-                          style={{ backgroundColor: getColorForStatus(card.title) }}
-                        />
                         <span className="dashboard-card__label">{card.title}</span>
                       </div>
                     </div>
                     <strong className="dashboard-card__value">{card.value}</strong>
-                    {isMyTickets && (
-                      <div className="dashboard-card__footer-text">
-                        {isActive ? 'Active filter' : 'Click to filter'}
-                      </div>
-                    )}
-                    {!isMyTickets && <p className="dashboard-card__detail">{card.detail}</p>}
+                    <p className="dashboard-card__detail">{card.detail}</p>
                   </article>
-                )
-              })}
-            </section>
+                ))}
+              </section>
+            )}
 
             {activePath === '/MyTickets' ? (
               <MyTickets activePage={activePage} searchQuery={searchQuery} />

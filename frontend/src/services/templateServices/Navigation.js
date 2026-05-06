@@ -5,14 +5,16 @@ import {
   Ticket01,
   Table01,
   Chart01,
+  Folder,
+  TrendingUp,
 } from '../../components/template/TemplateIcons.jsx'
 
 export const defaultNavigationPath = '/dashboard'
 
 export const implementedNavigationPaths = [
   '/MyTickets',
-  '/tickets',
-  '/documents',
+  '/TicketsOverview',
+  '/ProjectsOverview',
   '/Table',
   '/TableActions',
   '/users',
@@ -24,19 +26,19 @@ export const primaryNavigationItems = [
     id: 'my-tickets',
     label: 'My Tickets',
     href: '/MyTickets',
-    icon: LayoutDashboard,
-  },
-  {
-    id: 'tickets',
-    label: 'Tickets',
-    href: '/tickets',
     icon: Ticket01,
   },
   {
-    id: 'documents',
-    label: 'Documents',
-    href: '/documents',
-    icon: FileText01,
+    id: 'tickes-overview',
+    label: 'Tickets Overview',
+    href: '/TicketsOverview',
+    icon: TrendingUp,
+  },
+  {
+    id: 'projects-overview',
+    label: 'Projects Overview',
+    href: '/ProjectsOverview',
+    icon: Folder,
   },
   {
     id: 'table',

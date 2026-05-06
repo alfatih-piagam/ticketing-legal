@@ -37,6 +37,8 @@ function DialogEdit({
     return null
   }
 
+  const hasUserMeta = Boolean(user?.department || user?.role)
+
   const dialogNode = (
     <div className="dashboard-popup-overlay" role="presentation" onClick={onClose}>
       <div
@@ -68,7 +70,7 @@ function DialogEdit({
           <p className="dashboard-popup__text">
             Data untuk <strong>{user?.name ?? 'item ini'}</strong> siap dibuka ke proses edit.
           </p>
-          {user ? (
+          {hasUserMeta ? (
             <p className="dashboard-popup__text">
               Department: {user.department} | Role: {user.role}
             </p>
