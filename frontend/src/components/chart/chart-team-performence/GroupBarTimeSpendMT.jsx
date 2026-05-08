@@ -42,14 +42,37 @@ function formatMonthLabel(month, year) {
   return [month, year].filter(Boolean).join(' ')
 }
 
+function toTotalMinutes(hoursValue = 0, minutesValue = 0) {
+  const normalizedHours = Number(hoursValue) || 0
+  const normalizedMinutes = Number(minutesValue) || 0
+
+  return Math.max(0, Math.round(normalizedHours * 60 + normalizedMinutes))
+}
+
+function getDurationParts(totalMinutes = 0) {
+  const normalizedTotalMinutes = Math.max(0, Math.round(Number(totalMinutes) || 0))
+
+  return {
+    totalMinutes: normalizedTotalMinutes,
+    hours: Math.floor(normalizedTotalMinutes / 60),
+    minutes: normalizedTotalMinutes % 60,
+    decimalHours: normalizedTotalMinutes / 60,
+  }
+}
+
+function formatDurationLabel(hoursValue = 0, minutesValue = 0) {
+  const duration = getDurationParts(toTotalMinutes(hoursValue, minutesValue))
+
+  return `${duration.hours} Jam ${duration.minutes} menit`
+}
+
 function getPerformanceTotals(monthlyPerformance) {
-  return monthlyPerformance.reduce(
-    (totals, item) => ({
-      completed: totals.completed + (item.completed ?? 0),
-      pending: totals.pending + (item.pending ?? 0),
-    }),
-    { completed: 0, pending: 0 },
+  const totalMinutes = monthlyPerformance.reduce(
+    (sum, item) => sum + toTotalMinutes(item.completed ?? 0, item.pending ?? 0),
+    0,
   )
+
+  return getDurationParts(totalMinutes)
 }
 
 function buildChartModel(members, hiddenKeys) {
@@ -62,22 +85,17 @@ function buildChartModel(members, hiddenKeys) {
       totals,
       color: member.color ?? palette[index % palette.length],
       dataKey: getSeriesDataKey(member.id ?? member.name ?? index),
-      legendDescription:
-        member.legendDescription ??
-        [
-          member.role,
-          member.sla ? `SLA ${member.sla}` : null,
-          `${totals.completed} completed`,
-          `${totals.pending} pending`,
-        ]
-          .filter(Boolean)
-          .join(' | '),
+      hoursKey: `${getSeriesDataKey(member.id ?? member.name ?? index)}_hours`,
+      minutesKey: `${getSeriesDataKey(member.id ?? member.name ?? index)}_minutes`,
+      legendDescription: member.legendDescription
+        ?? `Total Waktu: ${formatDurationLabel(totals.hours, totals.minutes)}`,
     }
   })
   const rowsByMonthKey = new Map()
 
   normalizedMembers.forEach((member) => {
     member.monthlyPerformance?.forEach((item) => {
+      const duration = getDurationParts(toTotalMinutes(item.completed ?? 0, item.pending ?? 0))
       const monthKey = `${item.year ?? 0}-${String(item.monthIndex ?? 0).padStart(2, '0')}`
       const currentRow = rowsByMonthKey.get(monthKey) ?? {
         month: item.month,
@@ -86,7 +104,9 @@ function buildChartModel(members, hiddenKeys) {
         year: item.year ?? 0,
       }
 
-      currentRow[member.dataKey] = item.completed ?? 0
+      currentRow[member.dataKey] = duration.decimalHours
+      currentRow[member.hoursKey] = duration.hours
+      currentRow[member.minutesKey] = duration.minutes
       rowsByMonthKey.set(monthKey, currentRow)
     })
   })
@@ -104,6 +124,8 @@ function buildChartModel(members, hiddenKeys) {
 
       normalizedMembers.forEach((member) => {
         normalizedRow[member.dataKey] ??= 0
+        normalizedRow[member.hoursKey] ??= 0
+        normalizedRow[member.minutesKey] ??= 0
       })
 
       return normalizedRow
@@ -122,7 +144,16 @@ function buildChartModel(members, hiddenKeys) {
       dataKey: member.dataKey,
       label: member.name,
       color: member.color,
-      valueFormatter: (value) => `${value ?? 0} tiket`,
+      valueFormatter: (value, context) => {
+        const row =
+          typeof context?.dataIndex === 'number' ? dataset[context.dataIndex] : null
+
+        if (row) {
+          return formatDurationLabel(row[member.hoursKey], row[member.minutesKey])
+        }
+
+        return formatDurationLabel(value ?? 0, 0)
+      },
     }))
 
   return {
@@ -132,7 +163,11 @@ function buildChartModel(members, hiddenKeys) {
   }
 }
 
-export default function GroupBarChartTP({ members = defaultMembers, height = 420 }) {
+export default function GroupBarTimeSpendMT({
+  members = defaultMembers,
+  height = 420,
+  emptyMessage = 'Belum ada data monthly performance untuk tahun yang dipilih.',
+}) {
   const [hiddenSeriesKeys, setHiddenSeriesKeys] = useState([])
   const { dataset, legendItems, series } = useMemo(
     () => buildChartModel(members, hiddenSeriesKeys),
@@ -151,65 +186,71 @@ export default function GroupBarChartTP({ members = defaultMembers, height = 420
 
   return (
     <div className="team-performance-chart">
-      <div className="team-performance-chart__legend" aria-label="Team performance legend">
-        {legendItems.map((item) => (
-          <button
-            key={item.dataKey}
-            type="button"
-            className={[
-              'team-performance-chart__legend-item',
-              item.hidden ? 'team-performance-chart__legend-item--hidden' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            aria-pressed={!item.hidden}
-            onClick={() => handleToggleSeries(item.dataKey)}
-          >
-            <span
-              className="team-performance-chart__legend-swatch"
-              aria-hidden="true"
-              style={{ backgroundColor: item.color }}
-            />
-            <span className="team-performance-chart__legend-label">{item.name}</span>
-            <span className="team-performance-chart__legend-tooltip">{item.description}</span>
-          </button>
-        ))}
-      </div>
+      {members.length === 0 ? (
+        <div className="team-performance-chart__empty">{emptyMessage}</div>
+      ) : series.length > 0 ? (
+        <>
+          <div className="team-performance-chart__legend" aria-label="Team time spend legend">
+            {legendItems.map((item) => (
+              <button
+                key={item.dataKey}
+                type="button"
+                className={[
+                  'team-performance-chart__legend-item',
+                  item.hidden ? 'team-performance-chart__legend-item--hidden' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                aria-pressed={!item.hidden}
+                onClick={() => handleToggleSeries(item.dataKey)}
+              >
+                <span
+                  className="team-performance-chart__legend-swatch"
+                  aria-hidden="true"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="team-performance-chart__legend-label">{item.name}</span>
+                <span className="team-performance-chart__legend-tooltip">{item.description}</span>
+              </button>
+            ))}
+          </div>
 
-      {series.length > 0 ? (
-        <Box sx={{ width: '100%', height }}>
-          <BarChart
-            dataset={dataset}
-            series={series}
-            xAxis={[
-              {
-                scaleType: 'band',
-                dataKey: 'monthLabel',
-                valueFormatter: (value, context) => {
-                  const normalizedValue = String(value ?? '')
+          <Box sx={{ width: '100%', height }}>
+            <BarChart
+              dataset={dataset}
+              series={series}
+              xAxis={[
+                {
+                  scaleType: 'band',
+                  dataKey: 'monthLabel',
+                  valueFormatter: (value, context) => {
+                    const normalizedValue = String(value ?? '')
 
-                  if (context.location === 'tick') {
-                    return normalizedValue.replace(/\s+\d{4}$/, '')
-                  }
+                    if (context.location === 'tick') {
+                      return normalizedValue.replace(/\s+\d{4}$/, '')
+                    }
 
-                  return normalizedValue
+                    return normalizedValue
+                  },
                 },
-              },
-            ]}
-            yAxis={[{ width: 42 }]}
-            grid={{ horizontal: true }}
-            axisHighlight={{ x: 'band' }}
-            borderRadius={6}
-            hideLegend
-            margin={{ top: 24, right: 18, bottom: 34, left: 0 }}
-            slotProps={{
-              tooltip: {
-                trigger: 'axis',
-                sort: 'none',
-              },
-            }}
-          />
-        </Box>
+              ]}
+              yAxis={[{ width: 42 }]}
+              grid={{ horizontal: true }}
+              axisHighlight={{ x: 'band' }}
+              borderRadius={6}
+              hideLegend
+              margin={{ top: 24, right: 18, bottom: 34, left: 0 }}
+              slotProps={{
+                tooltip: {
+                  trigger: 'axis',
+                  anchor: 'pointer',
+                  placement: 'top-end',
+                  sort: 'none',
+                },
+              }}
+            />
+          </Box>
+        </>
       ) : (
         <div className="team-performance-chart__empty">
           Semua nama sedang di-disable. Klik salah satu nama untuk menampilkan chart kembali.

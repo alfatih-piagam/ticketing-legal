@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 
 import ButtonRangeDate from '../../../components/button/ButtonRangeDate.jsx'
 import GroupBarChartTP from '../../../components/chart/chart-team-performence/GroupBarChartMonthlyTP.jsx'
+import GroupBarTimeSpendMT from '../../../components/chart/chart-team-performence/GroupBarTimeSpendMT.jsx'
+import YearDropdownTP from '../../../components/dropdown/filter/YearTeamPerformance.jsx'
+import ButtonExport from '../../../components/button/ButtonExport.jsx'
+import { FileText01 } from '../../../components/template/TemplateIcons.jsx'
 
 const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
 
@@ -106,6 +110,31 @@ function getPerformanceTotals(monthlyPerformance) {
   )
 }
 
+function getAvailableYears(members) {
+  const years = new Set()
+
+  members.forEach((member) => {
+    member.monthlyPerformance.forEach((item) => {
+      if (item.year) {
+        years.add(item.year)
+      }
+    })
+  })
+
+  return Array.from(years).sort((leftYear, rightYear) => rightYear - leftYear)
+}
+
+function filterMembersByYear(members, selectedYear) {
+  return members
+    .map((member) => ({
+      ...member,
+      monthlyPerformance: member.monthlyPerformance.filter(
+        (item) => String(item.year) === String(selectedYear),
+      ),
+    }))
+    .filter((member) => member.monthlyPerformance.length > 0)
+}
+
 function formatRangeLabel(range) {
   const startDate = parseDateValue(range.startDate)
   const endDate = parseDateValue(range.endDate)
@@ -123,10 +152,12 @@ function formatRangeLabel(range) {
 }
 
 export default function TeamPerformence() {
+  const currentYear = String(new Date().getFullYear())
   const [selectedRange, setSelectedRange] = useState({
     startDate: '',
     endDate: '',
   })
+  const [selectedYear, setSelectedYear] = useState(currentYear)
 
   const filteredMembers = useMemo(
     () =>
@@ -139,6 +170,19 @@ export default function TeamPerformence() {
   const membersWithData = useMemo(
     () => filteredMembers.filter((member) => member.monthlyPerformance.length > 0),
     [filteredMembers],
+  )
+  const availableYears = useMemo(() => getAvailableYears(membersWithData), [membersWithData])
+  const yearOptions = useMemo(
+    () =>
+      availableYears.map((year) => ({
+        value: String(year),
+        label: String(year),
+      })),
+    [availableYears],
+  )
+  const chartMembers = useMemo(
+    () => filterMembersByYear(membersWithData, selectedYear),
+    [membersWithData, selectedYear],
   )
   const totalCompleted = useMemo(
     () =>
@@ -186,6 +230,20 @@ export default function TeamPerformence() {
   }, [filteredMembers])
   const activeRangeLabel = useMemo(() => formatRangeLabel(selectedRange), [selectedRange])
 
+  useEffect(() => {
+    if (yearOptions.length === 0) {
+      return
+    }
+
+    const selectedYearExists = yearOptions.some((option) => option.value === selectedYear)
+
+    if (!selectedYearExists) {
+      const fallbackYear = yearOptions.find((option) => option.value === currentYear)?.value
+
+      setSelectedYear(fallbackYear ?? yearOptions[0].value)
+    }
+  }, [currentYear, selectedYear, yearOptions])
+
   return (
     <section className="chart-page" aria-label="Team performance report">
       <article className="dashboard-panel users-table-card">
@@ -201,20 +259,61 @@ export default function TeamPerformence() {
 
           <div className="users-table-card__actions">
             <ButtonRangeDate label="Periode" onChange={setSelectedRange} />
+            <ButtonExport variant="action" aria-label="Export team performance report">
+              <FileText01 size={18} aria-hidden="true" />
+              <span>Export</span>
+            </ButtonExport>
           </div>
         </div>
       </article>
 
       <div className="chart-grid">
         <article className="dashboard-panel chart-card chart-card--wide">
-          <div className="chart-card__header">
-            <p className="dashboard-panel__eyebrow">Monthly Completed by User</p>
-            <h2 className="dashboard-panel__title">Team Monthly Performance</h2>
+          <div className="chart-card__header chart-card__header--split">
+            <div className="chart-card__header-copy">
+              <p className="dashboard-panel__eyebrow">Monthly Completed by User</p>
+              <h2 className="dashboard-panel__title">Team Monthly Performance</h2>
+            </div>
+
+            {yearOptions.length > 0 ? (
+              <YearDropdownTP
+                label="Tahun"
+                value={selectedYear}
+                options={yearOptions}
+                onChange={setSelectedYear}
+                className="chart-card__header-action"
+              />
+            ) : null}
           </div>
 
           <div className="chart-card__body">
             {membersWithData.length > 0 ? (
-              <GroupBarChartTP members={membersWithData} />
+              <GroupBarChartTP
+                members={chartMembers}
+                emptyMessage={`Belum ada data monthly performance untuk tahun ${selectedYear}.`}
+              />
+            ) : (
+              <p className="users-table-card__description">
+                Belum ada data monthly pada rentang tanggal ini.
+              </p>
+            )}
+          </div>
+        </article>
+
+        <article className="dashboard-panel chart-card chart-card--wide">
+          <div className="chart-card__header">
+            <div className="chart-card__header-copy">
+              <p className="dashboard-panel__eyebrow">Monthly Time Spend by User</p>
+              <h2 className="dashboard-panel__title">Team Monthly Time Spend</h2>
+            </div>
+          </div>
+
+          <div className="chart-card__body">
+            {membersWithData.length > 0 ? (
+              <GroupBarTimeSpendMT
+                members={chartMembers}
+                emptyMessage={`Belum ada data monthly time spend untuk tahun ${selectedYear}.`}
+              />
             ) : (
               <p className="users-table-card__description">
                 Belum ada data monthly pada rentang tanggal ini.

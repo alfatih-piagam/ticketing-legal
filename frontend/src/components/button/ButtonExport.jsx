@@ -1,4 +1,5 @@
 const buttonClassNames = {
+  action: 'users-table-card__action',
   detail: 'users-table__detail-button',
   accordion: 'users-table__accordion-button',
   icon: 'users-table__icon-button',

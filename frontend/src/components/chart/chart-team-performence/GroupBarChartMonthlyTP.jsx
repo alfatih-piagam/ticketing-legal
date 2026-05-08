@@ -52,6 +52,10 @@ function getPerformanceTotals(monthlyPerformance) {
   )
 }
 
+function getTotalTickets(totals) {
+  return (totals.completed ?? 0) + (totals.pending ?? 0)
+}
+
 function buildChartModel(members, hiddenKeys) {
   const hiddenKeySet = new Set(hiddenKeys)
   const normalizedMembers = members.map((member, index) => {
@@ -63,15 +67,7 @@ function buildChartModel(members, hiddenKeys) {
       color: member.color ?? palette[index % palette.length],
       dataKey: getSeriesDataKey(member.id ?? member.name ?? index),
       legendDescription:
-        member.legendDescription ??
-        [
-          member.role,
-          member.sla ? `SLA ${member.sla}` : null,
-          `${totals.completed} completed`,
-          `${totals.pending} pending`,
-        ]
-          .filter(Boolean)
-          .join(' | '),
+        member.legendDescription ?? `Total Ticket: ${getTotalTickets(totals)}`,
     }
   })
   const rowsByMonthKey = new Map()
@@ -122,7 +118,7 @@ function buildChartModel(members, hiddenKeys) {
       dataKey: member.dataKey,
       label: member.name,
       color: member.color,
-      valueFormatter: (value) => `${value ?? 0} tiket`,
+      valueFormatter: (value) => `${value ?? 0} Ticket`,
     }))
 
   return {
@@ -132,7 +128,11 @@ function buildChartModel(members, hiddenKeys) {
   }
 }
 
-export default function GroupBarChartTP({ members = defaultMembers, height = 420 }) {
+export default function GroupBarChartTP({
+  members = defaultMembers,
+  height = 420,
+  emptyMessage = 'Belum ada data monthly performance untuk tahun yang dipilih.',
+}) {
   const [hiddenSeriesKeys, setHiddenSeriesKeys] = useState([])
   const { dataset, legendItems, series } = useMemo(
     () => buildChartModel(members, hiddenSeriesKeys),
@@ -151,65 +151,71 @@ export default function GroupBarChartTP({ members = defaultMembers, height = 420
 
   return (
     <div className="team-performance-chart">
-      <div className="team-performance-chart__legend" aria-label="Team performance legend">
-        {legendItems.map((item) => (
-          <button
-            key={item.dataKey}
-            type="button"
-            className={[
-              'team-performance-chart__legend-item',
-              item.hidden ? 'team-performance-chart__legend-item--hidden' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            aria-pressed={!item.hidden}
-            onClick={() => handleToggleSeries(item.dataKey)}
-          >
-            <span
-              className="team-performance-chart__legend-swatch"
-              aria-hidden="true"
-              style={{ backgroundColor: item.color }}
-            />
-            <span className="team-performance-chart__legend-label">{item.name}</span>
-            <span className="team-performance-chart__legend-tooltip">{item.description}</span>
-          </button>
-        ))}
-      </div>
+      {members.length === 0 ? (
+        <div className="team-performance-chart__empty">{emptyMessage}</div>
+      ) : series.length > 0 ? (
+        <>
+          <div className="team-performance-chart__legend" aria-label="Team performance legend">
+            {legendItems.map((item) => (
+              <button
+                key={item.dataKey}
+                type="button"
+                className={[
+                  'team-performance-chart__legend-item',
+                  item.hidden ? 'team-performance-chart__legend-item--hidden' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                aria-pressed={!item.hidden}
+                onClick={() => handleToggleSeries(item.dataKey)}
+              >
+                <span
+                  className="team-performance-chart__legend-swatch"
+                  aria-hidden="true"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="team-performance-chart__legend-label">{item.name}</span>
+                <span className="team-performance-chart__legend-tooltip">{item.description}</span>
+              </button>
+            ))}
+          </div>
 
-      {series.length > 0 ? (
-        <Box sx={{ width: '100%', height }}>
-          <BarChart
-            dataset={dataset}
-            series={series}
-            xAxis={[
-              {
-                scaleType: 'band',
-                dataKey: 'monthLabel',
-                valueFormatter: (value, context) => {
-                  const normalizedValue = String(value ?? '')
+          <Box sx={{ width: '100%', height }}>
+            <BarChart
+              dataset={dataset}
+              series={series}
+              xAxis={[
+                {
+                  scaleType: 'band',
+                  dataKey: 'monthLabel',
+                  valueFormatter: (value, context) => {
+                    const normalizedValue = String(value ?? '')
 
-                  if (context.location === 'tick') {
-                    return normalizedValue.replace(/\s+\d{4}$/, '')
-                  }
+                    if (context.location === 'tick') {
+                      return normalizedValue.replace(/\s+\d{4}$/, '')
+                    }
 
-                  return normalizedValue
+                    return normalizedValue
+                  },
                 },
-              },
-            ]}
-            yAxis={[{ width: 42 }]}
-            grid={{ horizontal: true }}
-            axisHighlight={{ x: 'band' }}
-            borderRadius={6}
-            hideLegend
-            margin={{ top: 24, right: 18, bottom: 34, left: 0 }}
-            slotProps={{
-              tooltip: {
-                trigger: 'axis',
-                sort: 'none',
-              },
-            }}
-          />
-        </Box>
+              ]}
+              yAxis={[{ width: 42 }]}
+              grid={{ horizontal: true }}
+              axisHighlight={{ x: 'band' }}
+              borderRadius={6}
+              hideLegend
+              margin={{ top: 24, right: 18, bottom: 34, left: 0 }}
+              slotProps={{
+                tooltip: {
+                  trigger: 'axis',
+                  anchor: 'pointer',
+                  placement: 'top-end',
+                  sort: 'none',
+                },
+              }}
+            />
+          </Box>
+        </>
       ) : (
         <div className="team-performance-chart__empty">
           Semua nama sedang di-disable. Klik salah satu nama untuk menampilkan chart kembali.
