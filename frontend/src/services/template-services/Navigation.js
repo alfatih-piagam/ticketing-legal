@@ -16,6 +16,7 @@ export const implementedNavigationPaths = [
   '/TicketsOverview',
   '/ProjectsOverview',
   '/Reports',
+  '/Reports/TeamPerformance',
   '/Table',
   '/TableActions',
   '/users',

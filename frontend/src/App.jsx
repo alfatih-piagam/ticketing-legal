@@ -20,6 +20,7 @@ import LineChartPreview from './components/chart/LineChart.jsx'
 import PieChartPreview from './components/chart/PieChart.jsx'
 import { Edit03, Trash03, Users01 } from './components/template/TemplateIcons.jsx'
 import MyTickets from './pages/my-tickets/MyTickets.jsx'
+import TeamPerformence from './pages/reports/team-performence/TeamPerformence.jsx'
 
 function getCurrentPath() {
   if (typeof window === 'undefined') {
@@ -77,6 +78,12 @@ const pageDetails = {
     eyebrow: 'Visual Analytics',
     value: '5',
     detail: 'Kumpulan chart yang siap dipakai untuk visualisasi data.',
+  },
+  '/Reports/TeamPerformance': {
+    title: 'Team Performance',
+    eyebrow: 'Reports',
+    value: '4',
+    detail: 'Performa bulanan setiap user lengkap dengan progress completed dan pending.',
   },
   '/users': {
     title: 'Users',
@@ -402,11 +409,12 @@ function App() {
     }
   }, [])
 
-  const activePage = pageDetails[activePath] ?? pageDetails['/dashboard']
+  const activePage = pageDetails[activePath] ?? pageDetails['/MyTickets']
   const isUsersPage = activePath === '/users'
   const isTableActionsPage = activePath === '/TableActions'
   const isTablePage = tablePagePaths.includes(activePath)
   const isChartPage = activePath === '/Chart'
+  const isTeamPerformancePage = activePath === '/Reports/TeamPerformance'
   const tableEntityLabel = isUsersPage ? 'user' : 'data'
   const selectedUserName = selectedUser?.name ?? 'data ini'
 
@@ -605,7 +613,7 @@ function App() {
           <div
             className={`dashboard-content${activePath === '/MyTickets' ? ' dashboard-content--mytickets' : ''}`}
           >
-            {activePath !== '/MyTickets' && (
+            {activePath !== '/MyTickets' && !isTeamPerformancePage && (
               <section className="dashboard-overview" aria-label="Ringkasan dashboard">
                 {overviewCards.map((card) => (
                   <article className="dashboard-card" key={card.title}>
@@ -623,6 +631,8 @@ function App() {
 
             {activePath === '/MyTickets' ? (
               <MyTickets activePage={activePage} searchQuery={searchQuery} />
+            ) : isTeamPerformancePage ? (
+              <TeamPerformence />
             ) : isTablePage ? (
               <section className="dashboard-panel users-table-card" aria-label={activePage.title}>
                 <div className="users-table-card__header">
