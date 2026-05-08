@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import ButtonRangeDate from '../../../components/button/ButtonRangeDate.jsx'
-import GroupBarChartTP from '../../../components/chart/chart-team-performence/GroupBarChartTP.jsx'
+import GroupBarChartTP from '../../../components/chart/chart-team-performence/GroupBarChartMonthlyTP.jsx'
 
 const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
 
@@ -210,10 +210,6 @@ export default function TeamPerformence() {
           <div className="chart-card__header">
             <p className="dashboard-panel__eyebrow">Monthly Completed by User</p>
             <h2 className="dashboard-panel__title">Team Monthly Performance</h2>
-            <p className="users-table-card__description">
-              Hover ke nama pada legend untuk melihat keterangannya. Klik nama di legend untuk
-              disable atau aktifkan kembali series user tersebut.
-            </p>
           </div>
 
           <div className="chart-card__body">

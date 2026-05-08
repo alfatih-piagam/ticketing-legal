@@ -1689,6 +1689,39 @@ select {
   flex-shrink: 0;
 }
 
+.mtickets-table-shell .users-table-pagination__meta {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.mtickets-table-shell .users-table-pagination__page-size {
+  justify-content: flex-start;
+  gap: 0.55rem;
+}
+
+.mtickets-table-shell .users-table-pagination__summary {
+  line-height: 1.4;
+}
+
+.mtickets-table-shell .users-table-pagination__select {
+  padding-right: 2.3rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 5.5L7 8.5L10.5 5.5' stroke='%231A2A57' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.95rem center;
+  background-size: 0.85rem;
+}
+
+.mtickets-table-shell .users-table-pagination__select:focus-visible {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 5.5L7 8.5L10.5 5.5' stroke='%231A2A57' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.95rem center;
+  background-size: 0.85rem;
+}
+
 .mtickets-timeline {
   display: grid;
   gap: 0.95rem;
@@ -3674,12 +3707,37 @@ select {
   color: #7f8da8;
 }
 
+.register-user-popup__select--arrow-offset {
+  padding-right: 3rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6.5L8 10L12 6.5' stroke='%231A2A57' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.95rem;
+}
+
 .register-user-popup__input:focus,
 .register-user-popup__select:focus {
   outline: none;
   border-color: rgba(42, 157, 143, 0.7);
   background: #ffffff;
   box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.12);
+}
+
+.register-user-popup__select--arrow-offset:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 9.5L8 6L12 9.5' stroke='%231A2A57' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.95rem;
+}
+
+.register-user-popup__select--arrow-offset:active {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 9.5L8 6L12 9.5' stroke='%231A2A57' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.95rem;
 }
 
 .register-user-popup__dropdown-wrapper {

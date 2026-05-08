@@ -11,6 +11,10 @@ const supportOptions = [
   'Evelyn Santoso',
 ]
 
+const priorityOptions = ['Low', 'Medium', 'High']
+
+const documentStatusOptions = ['Lengkap', 'Belum lengkap']
+
 function DialogCreateTicket({
   isOpen = false,
   eyebrow = 'Create Ticket',
@@ -99,10 +103,6 @@ function DialogCreateTicket({
         </div>
 
         <div className="dashboard-popup__body">
-          <p className="dashboard-popup__text">
-            Lengkapi data ticket baru sesuai struktur yang tampil pada tabel MyTickets.
-          </p>
-
           <div className="register-user-popup__layout">
             <div className="register-user-popup__main">
               <div className="register-user-popup__form">
@@ -113,7 +113,7 @@ function DialogCreateTicket({
                     </label>
                     <select
                       id="ticket-category"
-                      className="register-user-popup__select"
+                      className="register-user-popup__select register-user-popup__select--arrow-offset"
                       defaultValue=""
                     >
                       <option value="" disabled>
@@ -133,7 +133,7 @@ function DialogCreateTicket({
                     </label>
                     <select
                       id="ticket-support-name"
-                      className="register-user-popup__select"
+                      className="register-user-popup__select register-user-popup__select--arrow-offset"
                       defaultValue=""
                     >
                       <option value="" disabled>
@@ -142,6 +142,46 @@ function DialogCreateTicket({
                       {supportOptions.map((supportName) => (
                         <option key={supportName} value={supportName}>
                           {supportName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="register-user-popup__field">
+                    <label className="register-user-popup__label" htmlFor="ticket-priority">
+                      Priority
+                    </label>
+                    <select
+                      id="ticket-priority"
+                      className="register-user-popup__select register-user-popup__select--arrow-offset"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Pilih priority
+                      </option>
+                      {priorityOptions.map((priority) => (
+                        <option key={priority} value={priority}>
+                          {priority}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="register-user-popup__field">
+                    <label className="register-user-popup__label" htmlFor="ticket-document-status">
+                      Status Document
+                    </label>
+                    <select
+                      id="ticket-document-status"
+                      className="register-user-popup__select register-user-popup__select--arrow-offset"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Pilih status document
+                      </option>
+                      {documentStatusOptions.map((documentStatus) => (
+                        <option key={documentStatus} value={documentStatus}>
+                          {documentStatus}
                         </option>
                       ))}
                     </select>

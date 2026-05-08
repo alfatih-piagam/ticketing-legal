@@ -99,10 +99,6 @@ function DialogCreateTicket({
         </div>
 
         <div className="dashboard-popup__body">
-          <p className="dashboard-popup__text">
-            Lengkapi data ticket baru sesuai struktur yang tampil pada tabel MyTickets.
-          </p>
-
           <div className="register-user-popup__layout">
             <div className="register-user-popup__main">
               <div className="register-user-popup__form">

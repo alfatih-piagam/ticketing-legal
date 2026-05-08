@@ -38,6 +38,10 @@ function getSeriesDataKey(memberId) {
   return `member_${String(memberId).replace(/[^a-zA-Z0-9]+/g, '_')}`
 }
 
+function formatMonthLabel(month, year) {
+  return [month, year].filter(Boolean).join(' ')
+}
+
 function getPerformanceTotals(monthlyPerformance) {
   return monthlyPerformance.reduce(
     (totals, item) => ({
@@ -77,6 +81,7 @@ function buildChartModel(members, hiddenKeys) {
       const monthKey = `${item.year ?? 0}-${String(item.monthIndex ?? 0).padStart(2, '0')}`
       const currentRow = rowsByMonthKey.get(monthKey) ?? {
         month: item.month,
+        monthLabel: formatMonthLabel(item.month, item.year),
         monthIndex: item.monthIndex ?? 0,
         year: item.year ?? 0,
       }
@@ -117,6 +122,7 @@ function buildChartModel(members, hiddenKeys) {
       dataKey: member.dataKey,
       label: member.name,
       color: member.color,
+      valueFormatter: (value) => `${value ?? 0} tiket`,
     }))
 
   return {
@@ -175,15 +181,31 @@ export default function GroupBarChartTP({ members = defaultMembers, height = 420
           <BarChart
             dataset={dataset}
             series={series}
-            xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
+            xAxis={[
+              {
+                scaleType: 'band',
+                dataKey: 'monthLabel',
+                valueFormatter: (value, context) => {
+                  const normalizedValue = String(value ?? '')
+
+                  if (context.location === 'tick') {
+                    return normalizedValue.replace(/\s+\d{4}$/, '')
+                  }
+
+                  return normalizedValue
+                },
+              },
+            ]}
             yAxis={[{ width: 42 }]}
             grid={{ horizontal: true }}
+            axisHighlight={{ x: 'band' }}
             borderRadius={6}
             hideLegend
             margin={{ top: 24, right: 18, bottom: 34, left: 0 }}
             slotProps={{
               tooltip: {
-                trigger: 'item',
+                trigger: 'axis',
+                sort: 'none',
               },
             }}
           />
