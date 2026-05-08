@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import BackgroundMain from './components/template/BackgroundMain.jsx'
-import DialogDelete from './components/Dialog/DialogDelete.jsx'
-import DialogEdit from './components/Dialog/DialogEdit.jsx'
+import DialogDelete from './components/dialog/DialogDelete.jsx'
+import DialogEdit from './components/dialog/DialogEdit.jsx'
 import Header from './components/template/Header.jsx'
 import Sidebar from './components/template/Sidebar.jsx'
 import DataTable, {
@@ -19,7 +19,7 @@ import HorizontalBarChartPreview from './components/chart/HorizontalBarChart.jsx
 import LineChartPreview from './components/chart/LineChart.jsx'
 import PieChartPreview from './components/chart/PieChart.jsx'
 import { Edit03, Trash03, Users01 } from './components/template/TemplateIcons.jsx'
-import MyTickets from './pages/MTickets/MyTickets.jsx'
+import MyTickets from './pages/my-tickets/MyTickets.jsx'
 
 function getCurrentPath() {
   if (typeof window === 'undefined') {

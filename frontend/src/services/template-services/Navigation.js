@@ -15,6 +15,7 @@ export const implementedNavigationPaths = [
   '/MyTickets',
   '/TicketsOverview',
   '/ProjectsOverview',
+  '/Reports',
   '/Table',
   '/TableActions',
   '/users',
@@ -39,6 +40,24 @@ export const primaryNavigationItems = [
     label: 'Projects Overview',
     href: '/ProjectsOverview',
     icon: Folder,
+  },
+  {
+    id: 'reports',
+    label: 'Reports',
+    href: '/Reports',
+    icon: FileText01,
+    children: [
+      {
+        id: 'team-performance',
+        label: 'Team Performance',
+        href: '/Reports/TeamPerformance',
+      },
+      {
+        id : 'executive-insights',
+        label: 'Executive Insights',
+        href: '/Reports/ExecutiveInsights',
+      }
+    ]
   },
   {
     id: 'table',

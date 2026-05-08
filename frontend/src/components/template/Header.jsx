@@ -17,7 +17,7 @@ import {
   getDepartmentFilterOptions,
   getSelectedDepartmentFilterLabel,
 } from './departmentFilter.js'
-import '../../styles/templateStyle/TemplateComponents.css'
+import '../../styles/template-style/TemplateComponents.css'
 
 function Header({
   title = 'Ticketing Legal',
